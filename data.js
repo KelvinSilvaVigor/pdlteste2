@@ -1,0 +1,113 @@
+const bis = [
+  {
+    id:"Painel-CS&P", nome:"Painel CS&P", area:"CS/Planejamento",
+    descricao:"Visão documentada de vendas, receita, conversão e performance comercial.",
+    objetivo:"Acompanhar a evolução comercial e apoiar decisões sobre canais, regiões e metas.",
+    status:"Em construção", periodicidade:"Diária", ultimaRevisao:"19/08/2026", atualizacao:"Diária",
+    owner:"Planejamento e Desenvolvimento Logistico", dados:"Data Engineering", acesso:"#",
+    perguntas:["Quanto vendemos?","Como está nossa evolução?","Qual canal possui maior conversão?","Qual região possui maior faturamento?","Qual é o ticket médio?","Como estamos em relação à meta?"],
+    dimensoes:["Data","Região","Canal","Produto","Cliente","Vendedor"],
+    filtros:["Período","Região","Canal","Produto"],
+    fontes:[["CRM","vendas","Dados comerciais","Diária"],["ERP","faturamento","Receita","Diária"]],
+    limitacoes:["Dados podem possuir atraso de até 24 horas.","Cancelamentos são considerados após processamento.","Indicadores históricos podem sofrer ajustes."],
+    kpis:["receita","conversao","ticket-medio","margem-ebitda"]
+  },
+  {
+    id:"Painel-Nivel-de-Serviço", nome:"Painel Nivel de Serviço", area:"Supply Chain",
+    descricao:"Documentação de receita, margem, despesas, fluxo e indicadores financeiros.",
+    objetivo:"Centralizar indicadores financeiros para acompanhamento de resultado e orçamento.",
+    status:"Em revisão", periodicidade:"Diária", ultimaRevisao:"18/08/2026", atualizacao:"Diária",
+    owner:"Planejamento e Desenvolvimento Logistico", dados:"Data Engineering", acesso:"#",
+    perguntas:["Qual foi a receita líquida?","Como está a margem?","Onde estão os maiores custos?","Estamos dentro do orçamento?"],
+    dimensoes:["Data","Centro de custo","Conta","Unidade","Categoria"],
+    filtros:["Período","Unidade","Centro de custo","Categoria"],
+    fontes:[["ERP","faturamento","Receitas","Diária"],["ERP","contas","Despesas","Diária"]],
+    limitacoes:["Fechamentos podem alterar períodos históricos.","Algumas despesas dependem do ciclo de contabilização."],
+    kpis:["receita-liquida","margem-ebitda","despesas-operacionais","orcamento"]
+  },
+  {
+    id:"Painel-Retorno-Operacional", nome:"Painel Retorno Operacional", area:"Logística/Armazém",
+    descricao:"Documentação de retenção, churn, carteira e experiência dos clientes.",
+    objetivo:"Acompanhar saúde da carteira e identificar riscos de perda.",
+    status:"Documentado", periodicidade:"Diária", ultimaRevisao:"19/08/2026", atualizacao:"Diária",
+    owner:"Planejamento e Desenvolvimento Logistico", dados:"Data Engineering", acesso:"#",
+    perguntas:["Qual é o churn?","Quais clientes estão em risco?","Como evolui a retenção?","Qual é o LTV?"],
+    dimensoes:["Data","Cliente","Segmento","Plano","CSM"],
+    filtros:["Período","Segmento","Plano","CSM"],
+    fontes:[["CRM","clientes","Carteira","Diária"],["Plataforma","uso","Engajamento","Diária"]],
+    limitacoes:["Eventos de cancelamento podem ser processados com atraso.","Contas sem atividade recente podem ter classificação pendente."],
+    kpis:["churn","retencao","ltv","clientes-em-risco"]
+  },
+  {
+    id:"Painel-de-Armazém", nome:"Painel de Armazém", area:"Armazém",
+    descricao:"Documentação de entregas, nível de serviço, retornos e performance operacional.",
+    objetivo:"Acompanhar eficiência logística, qualidade de entrega e causas de retorno.",
+    status:"Em construção", periodicidade:"Diária", ultimaRevisao:"19/08/2026", atualizacao:"Diária",
+    owner:"Planejamento e Desenvolvimento Logistico", dados:"Data Engineering", acesso:"#",
+    perguntas:["Qual o nível de serviço?","Onde estão os retornos?","Quais motivos concentram ocorrências?","Como está o tempo do processo?"],
+    dimensoes:["Data","Filial","Transportador","Cliente","Motivo","SKU"],
+    filtros:["Período","Filial","Transportador","Cliente","Motivo"],
+    fontes:[["TMS","entregas","Execução logística","Diária"],["ERP","faturamento","Referência comercial","Diária"]],
+    limitacoes:["Dados operacionais podem sofrer ajustes após fechamento.","Algumas ocorrências dependem do recebimento de arquivos de origem."],
+    kpis:["otif","on-time","fill-rate","retorno","tempo-processo"]
+  },
+  {
+    id:"bi-people", nome:"BI Pessoas", area:"Recursos Humanos",
+    descricao:"Documentação de indicadores de pessoas, quadro, absenteísmo e turnover.",
+    objetivo:"Apoiar decisões de gestão de pessoas com indicadores padronizados.",
+    status:"Desatualizado", periodicidade:"Mensal", ultimaRevisao:"30/06/2026", atualizacao:"Mensal",
+    owner:"Planejamento e Desenvolvimento Logistico", dados:"People Analytics", acesso:"#",
+    perguntas:["Como evolui o quadro?","Qual é o turnover?","Onde há maior absenteísmo?"],
+    dimensoes:["Mês","Área","Unidade","Cargo","Gestor"],
+    filtros:["Período","Área","Unidade","Gestor"],
+    fontes:[["HCM","colaboradores","Quadro de pessoas","Mensal"],["HCM","ponto","Frequência","Mensal"]],
+    limitacoes:["Indicadores mensais dependem do fechamento do período.","Reprocessamentos podem alterar meses anteriores."],
+    kpis:["turnover","absenteismo","headcount","custo-pessoal"]
+  }
+];
+
+const kpis = [
+  {id:"receita",nome:"Receita",bi:"bi-comercial",descricao:"Valor total reconhecido como receita no período.",formula:"Receita Bruta − Deduções",unidade:"R$",periodicidade:"Diária"},
+  {id:"conversao",nome:"Conversão",bi:"bi-comercial",descricao:"Percentual de oportunidades que resultaram em venda.",formula:"Vendas ÷ Oportunidades × 100",unidade:"%",periodicidade:"Diária"},
+  {id:"ticket-medio",nome:"Ticket Médio",bi:"bi-comercial",descricao:"Valor médio por venda realizada.",formula:"Receita ÷ Quantidade de Vendas",unidade:"R$",periodicidade:"Diária"},
+  {id:"margem-ebitda",nome:"Margem EBITDA",bi:"bi-financeiro",descricao:"Percentual do resultado operacional antes de juros, impostos, depreciação e amortização sobre a receita.",formula:"EBITDA ÷ Receita Líquida × 100",unidade:"%",periodicidade:"Diária"},
+  {id:"receita-liquida",nome:"Receita Líquida",bi:"bi-financeiro",descricao:"Receita após deduções, impostos, descontos e devoluções consideradas na regra.",formula:"Receita Bruta − Deduções",unidade:"R$",periodicidade:"Diária"},
+  {id:"despesas-operacionais",nome:"Despesas Operacionais",bi:"bi-financeiro",descricao:"Total de despesas classificadas como operacionais.",formula:"Σ Despesas Operacionais",unidade:"R$",periodicidade:"Diária"},
+  {id:"orcamento",nome:"Aderência ao Orçamento",bi:"bi-financeiro",descricao:"Compara o realizado com o orçamento aprovado.",formula:"Realizado ÷ Orçamento × 100",unidade:"%",periodicidade:"Diária"},
+  {id:"churn",nome:"Churn",bi:"bi-customer",descricao:"Percentual da base perdida no período.",formula:"Clientes Perdidos ÷ Clientes no Início × 100",unidade:"%",periodicidade:"Diária"},
+  {id:"retencao",nome:"Retenção",bi:"bi-customer",descricao:"Percentual de clientes mantidos na base durante o período.",formula:"Clientes Retidos ÷ Clientes no Início × 100",unidade:"%",periodicidade:"Diária"},
+  {id:"ltv",nome:"LTV",bi:"bi-customer",descricao:"Valor estimado gerado por um cliente durante seu relacionamento.",formula:"Ticket Médio × Frequência × Vida Média",unidade:"R$",periodicidade:"Diária"},
+  {id:"clientes-em-risco",nome:"Clientes em Risco",bi:"bi-customer",descricao:"Quantidade de clientes classificados pela regra de risco.",formula:"Contagem de Clientes em Risco",unidade:"clientes",periodicidade:"Diária"},
+  {id:"otif",nome:"OTIF",bi:"bi-logistica",descricao:"Percentual de entregas realizadas no prazo e completas.",formula:"Entregas OTIF ÷ Entregas Totais × 100",unidade:"%",periodicidade:"Diária"},
+  {id:"on-time",nome:"On Time",bi:"bi-logistica",descricao:"Percentual de entregas realizadas dentro do prazo.",formula:"Entregas no Prazo ÷ Entregas Totais × 100",unidade:"%",periodicidade:"Diária"},
+  {id:"fill-rate",nome:"Fill Rate",bi:"bi-logistica",descricao:"Percentual da quantidade solicitada que foi efetivamente atendida.",formula:"Quantidade Atendida ÷ Quantidade Solicitada × 100",unidade:"%",periodicidade:"Diária"},
+  {id:"retorno",nome:"Retorno",bi:"bi-logistica",descricao:"Indicador de ocorrências de retorno dentro do universo documentado.",formula:"Retornos ÷ Operações Totais × 100",unidade:"%",periodicidade:"Diária"},
+  {id:"tempo-processo",nome:"Tempo do Processo",bi:"bi-logistica",descricao:"Tempo médio entre os marcos definidos para o processo operacional.",formula:"Média dos Dias Totais",unidade:"dias",periodicidade:"Diária"},
+  {id:"turnover",nome:"Turnover",bi:"bi-people",descricao:"Movimentação relativa do quadro no período.",formula:"Desligamentos ÷ Headcount Médio × 100",unidade:"%",periodicidade:"Mensal"},
+  {id:"absenteismo",nome:"Absenteísmo",bi:"bi-people",descricao:"Percentual de horas ausentes em relação às horas previstas.",formula:"Horas Ausentes ÷ Horas Previstas × 100",unidade:"%",periodicidade:"Mensal"},
+  {id:"headcount",nome:"Headcount",bi:"bi-people",descricao:"Quantidade de colaboradores ativos.",formula:"Contagem de Colaboradores Ativos",unidade:"pessoas",periodicidade:"Mensal"},
+  {id:"custo-pessoal",nome:"Custo de Pessoal",bi:"bi-people",descricao:"Custo total associado ao quadro no período.",formula:"Σ Custos de Pessoal",unidade:"R$",periodicidade:"Mensal"}
+];
+
+const glossary = [
+ ["Receita","Valor econômico reconhecido como resultado de vendas ou serviços.","Receita, Receita Líquida","Comercial; Financeiro"],
+ ["Receita Líquida","Receita após as deduções definidas pela regra do indicador.","Receita Líquida","Financeiro"],
+ ["EBITDA","Resultado operacional antes de juros, impostos, depreciação e amortização.","Margem EBITDA","Financeiro"],
+ ["Churn","Percentual da base de clientes perdida em determinado período.","Churn","Customer Success"],
+ ["Conversão","Relação entre resultados comerciais e oportunidades consideradas.","Conversão","Comercial"],
+ ["Ticket Médio","Valor médio associado a cada venda.","Ticket Médio","Comercial"],
+ ["CAC","Custo médio para adquirir um cliente.","CAC","Comercial; Customer Success"],
+ ["LTV","Valor estimado gerado por um cliente ao longo do relacionamento.","LTV","Customer Success"],
+ ["OTIF","Entregas realizadas no prazo e completas.","OTIF","Logística"],
+ ["On Time","Entregas realizadas dentro do prazo.","On Time","Logística"],
+ ["Fill Rate","Percentual da quantidade solicitada que foi atendida.","Fill Rate","Logística"],
+ ["Retorno","Ocorrência de retorno registrada no processo operacional.","Retorno","Logística"],
+ ["SLA","Acordo ou referência de prazo para execução de um processo.","Tempo do Processo","Logística"],
+ ["Lead Time","Tempo transcorrido entre marcos definidos de um processo.","Tempo do Processo","Logística"],
+ ["Turnover","Movimentação de entradas e saídas em relação ao quadro.","Turnover","Pessoas"],
+ ["Absenteísmo","Ausência em relação às horas previstas.","Absenteísmo","Pessoas"],
+ ["Headcount","Quantidade de pessoas ativas no quadro.","Headcount","Pessoas"],
+ ["Margem","Relação entre resultado e receita, conforme definição do indicador.","Margem EBITDA","Financeiro"],
+ ["Meta","Valor de referência utilizado para comparação de desempenho.","Aderência ao Orçamento","Comercial; Financeiro"],
+ ["Dimensão","Perspectiva usada para segmentar ou filtrar informações.","Todos","Todos"]
+];
